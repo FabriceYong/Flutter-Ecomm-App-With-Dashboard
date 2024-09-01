@@ -1,3 +1,4 @@
+import 'package:ecomm_dashboard/utility/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -53,7 +54,9 @@ class DashboardScreen extends StatelessWidget {
                           const Gap(20),
                           IconButton(
                               onPressed: () {
-                                //TODO: should complete call getAllProduct
+                                // should complete call getAllProduct
+                                context.dataProvider
+                                    .getAllProducts(showSnack: true);
                               },
                               icon: const Icon(Icons.refresh)),
                         ],

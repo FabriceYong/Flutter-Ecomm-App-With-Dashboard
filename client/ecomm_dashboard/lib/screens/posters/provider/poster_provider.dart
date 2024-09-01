@@ -69,7 +69,7 @@ class PosterProvider extends ChangeNotifier {
       }
       final Map<String, dynamic> formMapData = {
         'posterName': posterNameCtrl.text,
-        'posterImage': 'no_url'
+        'posterImage': posterForUpdate?.imageUrl ?? '',
       };
       final FormData formData =
           await createFormData(imgXFile: imgXFile, formData: formMapData);

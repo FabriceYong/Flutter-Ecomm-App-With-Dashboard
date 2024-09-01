@@ -1,3 +1,4 @@
+import 'package:ecomm_dashboard/utility/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,16 +19,19 @@ class ProductSummarySection extends StatelessWidget {
     return Consumer<DataProvider>(
       builder: (context, dataProvider, _) {
         int totalProduct = 1;
-        //TODO: should complete Make this product number dynamic bt calling calculateProductWithQuantity
-        totalProduct = 1;
-        int outOfStockProduct = 0;
-        int limitedStockProduct = 0;
+        // should complete Make this product number dynamic by calling calculateProductWithQuantity
+        totalProduct =
+            context.dataProvider.calculateProductWithQuantity(quantity: null);
+        int outOfStockProduct =
+            context.dataProvider.calculateProductWithQuantity(quantity: 0);
+        int limitedStockProduct =
+            context.dataProvider.calculateProductWithQuantity(quantity: 1);
         int otherStockProduct =
             totalProduct - outOfStockProduct - limitedStockProduct;
 
         List<ProductSummaryInfo> productSummeryItems = [
           ProductSummaryInfo(
-            title: "All Product",
+            title: "All Products",
             productsCount: totalProduct,
             svgSrc: "assets/icons/Product.svg",
             color: primaryColor,
@@ -77,7 +81,10 @@ class ProductSummarySection extends StatelessWidget {
               itemBuilder: (context, index) => ProductSummaryCard(
                 info: productSummeryItems[index],
                 onTap: (productType) {
-                  //TODO: should complete call filterProductsByQuantity
+                  // should complete call filterProductsByQuantity
+                  print(productType);
+                  context.dataProvider
+                      .filterProductsByQuantity(productType ?? '');
                 },
               ),
             ),

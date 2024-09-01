@@ -70,7 +70,7 @@ class CategoryProvider extends ChangeNotifier {
     try {
       final Map<String, dynamic> formDataMap = {
         'name': categoryNameCtrl.text,
-        'image': 'no_url',
+        'image': categoryForUpdate?.image ?? '',
       };
       final FormData form =
           await createFormData(imgXFile: imgXFile, formData: formDataMap);

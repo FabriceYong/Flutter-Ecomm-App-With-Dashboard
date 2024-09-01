@@ -23,6 +23,7 @@ class DataProvider extends ChangeNotifier {
     getAllBrands();
     getAllVariants();
     getAllVarianTypes();
+    getAllProducts();
   }
   // HTTP Service
   HttpService service = HttpService();
@@ -48,7 +49,7 @@ class DataProvider extends ChangeNotifier {
   List<Variant> get variants => _filteredVariants;
 
   final List<Product> _allProducts = [];
-  final List<Product> _filteredProducts = [];
+  List<Product> _filteredProducts = [];
   List<Product> get products => _filteredProducts;
 
   final List<Coupon> _allCoupons = [];
@@ -358,9 +359,62 @@ class DataProvider extends ChangeNotifier {
     }
   }
 
-  //TODO: should complete getAllProducts
+  // should complete getAllProducts
+  Future<List<Product>> getAllProducts({bool showSnack = false}) async {
+    try {
+      final Response response = await service.getItems(endpointUrl: 'products');
+      if (response.isOk) {
+        ApiResponse<List<Product>> apiResponse =
+            ApiResponse<List<Product>>.fromJson(
+                response.body,
+                (json) => (json as List)
+                    .map((item) => Product.fromJson(item))
+                    .toList());
+        if (apiResponse.success == true) {
+          _allProducts.clear();
+          _allProducts.addAll(apiResponse.data ?? []);
+          _filteredProducts.clear();
+          _filteredProducts.addAll(apiResponse.data ?? []);
+          notifyListeners();
+          if (showSnack) {
+            SnackBarHelper.showSuccessSnackBar(apiResponse.message);
+          }
+        } else {
+          SnackBarHelper.showErrorSnackBar('Failed to fetch products');
+        }
+      } else {
+        SnackBarHelper.showErrorSnackBar(
+            response.body?['message'] ?? response.statusText);
+      }
+    } catch (e) {
+      print(e);
+      SnackBarHelper.showErrorSnackBar('Unknown Error occurred: $e');
+      rethrow;
+    }
+    return _allProducts;
+  }
 
-  //TODO: should complete filterProducts
+  // should complete filterProducts
+  void filterProducts(String query) {
+    if (query.isEmpty) {
+      _filteredProducts = List.from(_allProducts);
+    } else {
+      _filteredProducts = _allProducts.where((product) {
+        final productNameContainsKeyword =
+            (product.name ?? '').toLowerCase().contains(query.toLowerCase());
+        final categoryNameContainsKeyword =
+            product.proCategoryId?.name?.contains(query.toLowerCase()) ?? false;
+        final subCategoryNameContainsKeyword =
+            product.proSubCategoryId?.name?.contains(query.toLowerCase()) ??
+                false;
+
+        //? Add more conditions here if there are any fields to match against
+        return productNameContainsKeyword ||
+            categoryNameContainsKeyword ||
+            subCategoryNameContainsKeyword;
+      }).toList();
+    }
+  }
 
   //TODO: should complete getAllCoupons
 
@@ -380,7 +434,47 @@ class DataProvider extends ChangeNotifier {
 
   //TODO: should complete calculateOrdersWithStatus
 
-  //TODO: should complete filterProductsByQuantity
 
-  //TODO: should complete calculateProductWithQuantity
+
+  // should complete filterProductsByQuantity
+  void filterProductsByQuantity(String productQntType){
+    if(productQntType == 'All Products') {
+      _filteredProducts = List.from(_allProducts);
+    }else if(productQntType == 'Out of Stock'){
+      _filteredProducts = _allProducts.where((product) {
+        //? Filter products with quantity equal to 0 (out of stock)
+        return product.quantity != null && product.quantity == 0;
+      }).toList();
+    }else if(productQntType == 'Limited Stock'){
+      _filteredProducts = _allProducts.where((product){
+        //? Filter products with quantity equal to 1 (limited stock)
+        return product.quantity != null && product.quantity == 1;
+      }).toList();
+    }else if(productQntType == 'Other Stock'){
+      _filteredProducts = _allProducts.where((product) {
+        //? Filter products with quantity not equal to 0 or 1 (other stock)
+        return product.quantity != null && product.quantity != 0 && product.quantity != 1;
+      }).toList();
+    }else{
+      _filteredProducts = List.from(_allProducts);
+    }
+    notifyListeners();
+  }
+
+  // should complete calculateProductWithQuantity
+  int calculateProductWithQuantity({int? quantity}){
+    int totalProducts = 0;
+    //? if targetQuantity is null it returns total product
+    if(quantity == null){
+      totalProducts = _allProducts.length;
+    }else{   
+      
+      for(Product product in _allProducts){
+        if(product.quantity != null && product.quantity == quantity){
+          totalProducts += 1; // Increment the count if quantity meets or exceeds the target quantity
+        }
+      }
+    }
+    return totalProducts;
+  }
 }
