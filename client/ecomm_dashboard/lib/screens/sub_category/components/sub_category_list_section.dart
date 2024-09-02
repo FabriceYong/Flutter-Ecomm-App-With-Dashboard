@@ -1,3 +1,4 @@
+import 'package:ecomm_dashboard/utility/delete_dialog.dart';
 import 'package:ecomm_dashboard/utility/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -63,8 +64,14 @@ class SubCategoryListSection extends StatelessWidget {
                       },
                       delete: () {
                         // should complete call deleteSubCategory
-                        context.subCategoryProvider.deleteSubCategory(
-                            dataProvider.subCategories[index]);
+                        showDeleteDialog(
+                            title: 'Delete',
+                            content: const Text(
+                                'Are you sure you want to delete this sub category?'),
+                            onPressed: () {
+                              context.subCategoryProvider.deleteSubCategory(
+                                  dataProvider.subCategories[index]);
+                            });
                       },
                     ),
                   ),

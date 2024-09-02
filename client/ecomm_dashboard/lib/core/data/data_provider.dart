@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' hide Category;
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../models/category.dart';
@@ -24,6 +25,8 @@ class DataProvider extends ChangeNotifier {
     getAllVariants();
     getAllVarianTypes();
     getAllProducts();
+    getAllCoupons();
+    getAllPosters();
   }
   // HTTP Service
   HttpService service = HttpService();
@@ -48,12 +51,12 @@ class DataProvider extends ChangeNotifier {
   List<Variant> _filteredVariants = [];
   List<Variant> get variants => _filteredVariants;
 
-  final List<Product> _allProducts = [];
+  List<Product> _allProducts = [];
   List<Product> _filteredProducts = [];
   List<Product> get products => _filteredProducts;
 
-  final List<Coupon> _allCoupons = [];
-  final List<Coupon> _filteredCoupons = [];
+  List<Coupon> _allCoupons = [];
+  List<Coupon> _filteredCoupons = [];
   List<Coupon> get coupons => _filteredCoupons;
 
   List<Poster> _allPosters = [];
@@ -371,10 +374,8 @@ class DataProvider extends ChangeNotifier {
                     .map((item) => Product.fromJson(item))
                     .toList());
         if (apiResponse.success == true) {
-          _allProducts.clear();
-          _allProducts.addAll(apiResponse.data ?? []);
-          _filteredProducts.clear();
-          _filteredProducts.addAll(apiResponse.data ?? []);
+          _allProducts = apiResponse.data ?? [];
+          _filteredProducts = apiResponse.data ?? [];
           notifyListeners();
           if (showSnack) {
             SnackBarHelper.showSuccessSnackBar(apiResponse.message);
@@ -384,7 +385,7 @@ class DataProvider extends ChangeNotifier {
         }
       } else {
         SnackBarHelper.showErrorSnackBar(
-            response.body?['message'] ?? response.statusText);
+            'Error: ${response.body?['message'] ?? response.statusText}');
       }
     } catch (e) {
       print(e);
@@ -395,7 +396,7 @@ class DataProvider extends ChangeNotifier {
   }
 
   // should complete filterProducts
-  void filterProducts(String query) {
+  filterProducts(String query) {
     if (query.isEmpty) {
       _filteredProducts = List.from(_allProducts);
     } else {
@@ -416,9 +417,49 @@ class DataProvider extends ChangeNotifier {
     }
   }
 
-  //TODO: should complete getAllCoupons
+  // should complete getAllCoupons
+  Future<void> getAllCoupons({bool showSnack = false}) async {
+    try {
+      final Response response = await service.getItems(endpointUrl: 'coupons');
+      if (response.isOk) {
+        ApiResponse apiResponse = ApiResponse.fromJson(
+            response.body,
+            (json) => (json as List)
+                .map((coupon) => Coupon.fromJson(coupon))
+                .toList());
+        if (apiResponse.success == true) {
+          _allCoupons = apiResponse.data ?? [];
+          _filteredCoupons = apiResponse.data ?? [];
+          notifyListeners();
+          if (showSnack) {
+            SnackBarHelper.showSuccessSnackBar(apiResponse.message);
+          }
+        } else {
+          SnackBarHelper.showErrorSnackBar('Failed to fetch coupons');
+        }
+      } else {
+        SnackBarHelper.showErrorSnackBar(
+            'Error: ${response.body?['message'] ?? response.statusText}');
+      }
+    } catch (e) {
+      print(e);
+      SnackBarHelper.showErrorSnackBar(e.toString());
+      rethrow;
+    }
+  }
 
-  //TODO: should complete filterCoupons
+  // should complete filterCoupons
+  void filterCoupons(String query) {
+    if (query.isEmpty) {
+      _filteredCoupons = List.from(_allCoupons);
+    } else {
+      _filteredCoupons = _allCoupons
+          .where((coupon) => (coupon.couponCode ?? '')
+              .toLowerCase()
+              .contains(query.toLowerCase()))
+          .toList();
+    }
+  }
 
   //TODO: should complete getAllPosters
 
@@ -434,44 +475,44 @@ class DataProvider extends ChangeNotifier {
 
   //TODO: should complete calculateOrdersWithStatus
 
-
-
   // should complete filterProductsByQuantity
-  void filterProductsByQuantity(String productQntType){
-    if(productQntType == 'All Products') {
+  void filterProductsByQuantity(String productQntType) {
+    if (productQntType == 'All Products') {
       _filteredProducts = List.from(_allProducts);
-    }else if(productQntType == 'Out of Stock'){
+    } else if (productQntType == 'Out of Stock') {
       _filteredProducts = _allProducts.where((product) {
         //? Filter products with quantity equal to 0 (out of stock)
         return product.quantity != null && product.quantity == 0;
       }).toList();
-    }else if(productQntType == 'Limited Stock'){
-      _filteredProducts = _allProducts.where((product){
+    } else if (productQntType == 'Limited Stock') {
+      _filteredProducts = _allProducts.where((product) {
         //? Filter products with quantity equal to 1 (limited stock)
         return product.quantity != null && product.quantity == 1;
       }).toList();
-    }else if(productQntType == 'Other Stock'){
+    } else if (productQntType == 'Other Stock') {
       _filteredProducts = _allProducts.where((product) {
         //? Filter products with quantity not equal to 0 or 1 (other stock)
-        return product.quantity != null && product.quantity != 0 && product.quantity != 1;
+        return product.quantity != null &&
+            product.quantity != 0 &&
+            product.quantity != 1;
       }).toList();
-    }else{
+    } else {
       _filteredProducts = List.from(_allProducts);
     }
     notifyListeners();
   }
 
   // should complete calculateProductWithQuantity
-  int calculateProductWithQuantity({int? quantity}){
+  int calculateProductWithQuantity({int? quantity}) {
     int totalProducts = 0;
     //? if targetQuantity is null it returns total product
-    if(quantity == null){
+    if (quantity == null) {
       totalProducts = _allProducts.length;
-    }else{   
-      
-      for(Product product in _allProducts){
-        if(product.quantity != null && product.quantity == quantity){
-          totalProducts += 1; // Increment the count if quantity meets or exceeds the target quantity
+    } else {
+      for (Product product in _allProducts) {
+        if (product.quantity != null && product.quantity == quantity) {
+          totalProducts +=
+              1; // Increment the count if quantity meets or exceeds the target quantity
         }
       }
     }

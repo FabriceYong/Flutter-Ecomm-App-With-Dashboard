@@ -38,7 +38,7 @@ class SubCategoryProvider extends ChangeNotifier {
           clearFields();
           _dataProvider.getAllSubCategories();
           SnackBarHelper.showSuccessSnackBar(apiResponse.message);
-          print('Sub Category added successfully');
+          log('Sub Category added successfully');
         } else {
           SnackBarHelper.showErrorSnackBar(
               'Failed to add Sub Category: ${apiResponse.message}');
@@ -49,7 +49,7 @@ class SubCategoryProvider extends ChangeNotifier {
       }
     } catch (e) {
       log(e.toString());
-      // SnackBarHelper.showErrorSnackBar(e.toString());
+      SnackBarHelper.showErrorSnackBar(e.toString());
       rethrow;
     }
   }
@@ -69,9 +69,10 @@ class SubCategoryProvider extends ChangeNotifier {
         ApiResponse<List<SubCategory>> apiResponse =
             ApiResponse<List<SubCategory>>.fromJson(response.body, null);
         if (apiResponse.success == true) {
-          clearFields();
           _dataProvider.getAllSubCategories();
+          clearFields();
           SnackBarHelper.showSuccessSnackBar(apiResponse.message);
+          log('Sub Category updated successfully');
         } else {
           SnackBarHelper.showErrorSnackBar(
               'Failed to update Sub Category: ${apiResponse.message}');
@@ -82,7 +83,7 @@ class SubCategoryProvider extends ChangeNotifier {
       }
     } catch (e) {
       log(e.toString());
-      // SnackBarHelper.showErrorSnackBar(e.toString());
+      SnackBarHelper.showErrorSnackBar(e.toString());
       rethrow;
     }
   }
@@ -108,6 +109,7 @@ class SubCategoryProvider extends ChangeNotifier {
         if (apiResponse.success == true) {
           _dataProvider.getAllSubCategories();
           SnackBarHelper.showSuccessSnackBar(apiResponse.message);
+          log('Sub Category deleted successfully');
         }
       } else {
         SnackBarHelper.showErrorSnackBar(
@@ -116,6 +118,7 @@ class SubCategoryProvider extends ChangeNotifier {
     } catch (e) {
       print(e);
       SnackBarHelper.showErrorSnackBar(e.toString());
+      rethrow;
     }
   }
 

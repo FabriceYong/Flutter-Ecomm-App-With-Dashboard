@@ -35,11 +35,13 @@ class VariantsProvider extends ChangeNotifier {
             'Failed to fetch variants: ${response.body?['message'] ?? 'Unknown error occurred'}');
       }
       if (response.isOk) {
-        ApiResponse apiResponse = ApiResponse.fromJson(response.body, null);
+        ApiResponse<List<Variant>> apiResponse =
+            ApiResponse<List<Variant>>.fromJson(response.body, null);
         if (apiResponse.success == true) {
           _dataProvider.getAllVariants();
           clearFields();
           SnackBarHelper.showSuccessSnackBar(apiResponse.message);
+          log('Variant added successfully');
         } else {
           SnackBarHelper.showErrorSnackBar('Failed to add variant');
         }
@@ -48,7 +50,8 @@ class VariantsProvider extends ChangeNotifier {
             'Error: ${response.body?['message'] ?? response.statusText}');
       }
     } catch (e) {
-      log(e.toString());
+      print(e);
+      SnackBarHelper.showErrorSnackBar(e.toString());
       rethrow;
     }
   }
@@ -70,11 +73,13 @@ class VariantsProvider extends ChangeNotifier {
             'Failed to fetch variants: ${response.body['message'] ?? 'Unknown error occurred'}');
       }
       if (response.isOk) {
-        ApiResponse apiResponse = ApiResponse.fromJson(response.body, null);
+        ApiResponse<List<Variant>> apiResponse =
+            ApiResponse<List<Variant>>.fromJson(response.body, null);
         if (apiResponse.success) {
           clearFields();
           _dataProvider.getAllVariants();
           SnackBarHelper.showSuccessSnackBar(apiResponse.message);
+          log('Variant updated successfully');
         } else {
           SnackBarHelper.showErrorSnackBar('Failed to update variant');
         }
@@ -84,6 +89,7 @@ class VariantsProvider extends ChangeNotifier {
       }
     } catch (e) {
       print(e);
+      SnackBarHelper.showErrorSnackBar(e.toString());
       rethrow;
     }
   }
@@ -103,7 +109,8 @@ class VariantsProvider extends ChangeNotifier {
       final Response response = await service.deleteItem(
           endpointUrl: 'variants', itemId: variant.sId ?? '');
       if (response.isOk) {
-        ApiResponse apiResponse = ApiResponse.fromJson(response.body, null);
+        ApiResponse<List<Variant>> apiResponse =
+            ApiResponse<List<Variant>>.fromJson(response.body, null);
         if (apiResponse.success == true) {
           _dataProvider.getAllVariants();
           SnackBarHelper.showSuccessSnackBar(apiResponse.message);
@@ -113,10 +120,11 @@ class VariantsProvider extends ChangeNotifier {
         }
       } else {
         SnackBarHelper.showErrorSnackBar(
-            'Error: ${response.body?['message'] ?? response.statusText}'); 
+            'Error: ${response.body?['message'] ?? response.statusText}');
       }
     } catch (e) {
       print(e);
+      SnackBarHelper.showErrorSnackBar(e.toString());
       rethrow;
     }
   }

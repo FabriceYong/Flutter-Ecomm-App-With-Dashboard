@@ -12,7 +12,7 @@ router.get('/', asyncHandler(async (req, res) => {
         const coupons = await Coupon.find().populate('applicableCategory', 'id name')
             .populate('applicableSubCategory', 'id name')
             .populate('applicableProduct', 'id name');
-        res.status.json({ success: true, message: "Coupons retrieved successfully.", data: coupons });
+        res.status(200).json({ success: true, message: "Coupons retrieved successfully.", data: coupons });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }

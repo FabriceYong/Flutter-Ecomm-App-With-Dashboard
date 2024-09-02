@@ -41,13 +41,14 @@ class CategoryProvider extends ChangeNotifier {
       final response =
           await service.addItem(endpointUrl: 'categories', itemData: form);
       if (response.isOk) {
-        ApiResponse apiResponse = ApiResponse.fromJson(response.body, null);
+        ApiResponse<List<Category>> apiResponse =
+            ApiResponse<List<Category>>.fromJson(response.body, null);
         print(apiResponse);
         if (apiResponse.success == true) {
-          clearFields();
           _dataProvider.getAllCategories();
+          clearFields();
           SnackBarHelper.showSuccessSnackBar(apiResponse.message);
-          log('Categories added');
+          log('Category added successfully');
         } else {
           SnackBarHelper.showErrorSnackBar(
               'Failed to add category: ${apiResponse.message}');
@@ -58,6 +59,8 @@ class CategoryProvider extends ChangeNotifier {
       }
     } catch (e) {
       log(e.toString());
+      SnackBarHelper.showErrorSnackBar(e.toString());
+      rethrow;
     }
   }
 
@@ -79,8 +82,8 @@ class CategoryProvider extends ChangeNotifier {
           itemId: categoryForUpdate?.sId ?? '',
           itemData: form);
       if (response.isOk) {
-        final ApiResponse apiResponse =
-            ApiResponse.fromJson(response.body, null);
+        final ApiResponse<List<Category>> apiResponse =
+            ApiResponse<List<Category>>.fromJson(response.body, null);
         if (apiResponse.success == true) {
           _dataProvider.getAllCategories();
           clearFields();
@@ -96,7 +99,9 @@ class CategoryProvider extends ChangeNotifier {
       }
       log('Category updated');
     } catch (e) {
-      log(e.toString());
+      print(e);
+      SnackBarHelper.showErrorSnackBar(e.toString());
+      rethrow;
     }
   }
 
@@ -127,10 +132,14 @@ class CategoryProvider extends ChangeNotifier {
       Response response = await service.deleteItem(
           endpointUrl: 'categories', itemId: category.sId ?? '');
       if (response.isOk) {
-        ApiResponse apiResponse = ApiResponse.fromJson(response.body, null);
+        ApiResponse<List<Category>> apiResponse =
+            ApiResponse<List<Category>>.fromJson(response.body, null);
         if (apiResponse.success == true) {
           _dataProvider.getAllCategories();
           SnackBarHelper.showSuccessSnackBar('Category deleted successfully');
+          log('Category deleted successfully');
+        } else {
+          SnackBarHelper.showErrorSnackBar('Failed to delete category');
         }
       } else {
         SnackBarHelper.showErrorSnackBar(
@@ -138,6 +147,7 @@ class CategoryProvider extends ChangeNotifier {
       }
     } catch (e) {
       log(e.toString());
+      SnackBarHelper.showErrorSnackBar(e.toString());
       rethrow;
     }
   }

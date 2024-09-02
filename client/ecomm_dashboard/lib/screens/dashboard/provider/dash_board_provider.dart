@@ -87,10 +87,10 @@ class DashBoardProvider extends ChangeNotifier {
       final Response response =
           await service.addItem(endpointUrl: 'products', itemData: form);
       if (response.isOk) {
-        ApiResponse apiResponse = ApiResponse.fromJson(response.body, null);
+        ApiResponse<List<Product>> apiResponse = ApiResponse<List<Product>>.fromJson(response.body, null);
         if (apiResponse.success) {
-          clearFields();
           _dataProvider.getAllProducts();
+          clearFields();
           SnackBarHelper.showSuccessSnackBar(apiResponse.message);
           log('Product created successfully');
         } else {
@@ -144,10 +144,10 @@ class DashBoardProvider extends ChangeNotifier {
             itemId: '${productForUpdate?.sId}',
             itemData: formData);
         if (response.isOk) {
-          ApiResponse apiResponse = ApiResponse.fromJson(response.body, null);
+          ApiResponse<List<Product>> apiResponse = ApiResponse<List<Product>>.fromJson(response.body, null);
           if (apiResponse.success) {
-            clearFields();
             _dataProvider.getAllProducts();
+            clearFields();
             SnackBarHelper.showSuccessSnackBar(apiResponse.message);
             log('Product updated successfully');
           } else {
@@ -182,7 +182,7 @@ class DashBoardProvider extends ChangeNotifier {
       final Response response = await service.deleteItem(
           endpointUrl: 'products', itemId: product.sId ?? '');
       if (response.isOk) {
-        ApiResponse apiResponse = ApiResponse.fromJson(response.body, null);
+        ApiResponse<List<Product>> apiResponse = ApiResponse<List<Product>>.fromJson(response.body, null);
         if (apiResponse.success) {
           _dataProvider.getAllProducts();
           SnackBarHelper.showSuccessSnackBar(apiResponse.message);

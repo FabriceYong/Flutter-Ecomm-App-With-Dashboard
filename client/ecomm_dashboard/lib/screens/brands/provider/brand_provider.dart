@@ -30,20 +30,15 @@ class BrandProvider extends ChangeNotifier {
       };
       final response =
           await service.addItem(endpointUrl: 'brands', itemData: formMapData);
-      if (response.body == null) {
-        print(response.body?['message']);
-        SnackBarHelper.showErrorSnackBar(
-            'Failed to add Brand: ${response.body?['message'] ?? 'Unknown error occurred'}');
-        return;
-      }
+ 
       if (response.isOk) {
         ApiResponse<List<Brand>> apiResponse =
             ApiResponse<List<Brand>>.fromJson(response.body, null);
         if (apiResponse.success == true) {
-          clearFields();
           _dataProvider.getAllBrands();
-          log('Brand added successfully');
+          clearFields();
           SnackBarHelper.showSuccessSnackBar(apiResponse.message);
+          log('Brand added successfully');
         } else {
           SnackBarHelper.showErrorSnackBar(
               'Failed to add brand: ${apiResponse.message}');
@@ -53,9 +48,9 @@ class BrandProvider extends ChangeNotifier {
             'Error: ${response.body?['message'] ?? response.statusText}');
       }
     } catch (e) {
-      log(e.toString());
+      print(e);
+      SnackBarHelper.showErrorSnackBar(e.toString());
       rethrow;
-      // SnackBarHelper.showErrorSnackBar(e.toString());
     }
   }
 
@@ -70,31 +65,25 @@ class BrandProvider extends ChangeNotifier {
           endpointUrl: 'brands',
           itemId: brandForUpdate?.sId ?? '',
           itemData: formMapData);
-      if (response.body == null) {
-        print(response.body?['message']);
-        SnackBarHelper.showErrorSnackBar(
-            'Failed to update Brand: ${response.body?['message'] ?? 'Unknown error occurred'}');
-        return;
-      }
       if (response.isOk) {
         ApiResponse<List<Brand>> apiResponse =
             ApiResponse<List<Brand>>.fromJson(response.body, null);
-        _dataProvider.getAllBrands();
         if (apiResponse.success == true) {
+          _dataProvider.getAllBrands();
           clearFields();
-          log('Brand updated successfully');
           SnackBarHelper.showSuccessSnackBar(apiResponse.message);
+          log('Brand updated successfully');
         } else {
-          SnackBarHelper.showErrorSnackBar(apiResponse.message);
+          SnackBarHelper.showErrorSnackBar('Failed to update brand');
         }
       } else {
         SnackBarHelper.showErrorSnackBar(
             response.body?['message'] ?? response.statusText);
       }
     } catch (e) {
-      log(e.toString());
+      print(e);
+      SnackBarHelper.showErrorSnackBar(e.toString());
       rethrow;
-      // SnackBarHelper.showErrorSnackBar(e.toString());
     }
   }
 
@@ -112,12 +101,6 @@ class BrandProvider extends ChangeNotifier {
     try {
       final Response response =
           await service.deleteItem(endpointUrl: 'brands', itemId: brand.sId!);
-      if (response.body == null) {
-        print(response.body?['message']);
-        SnackBarHelper.showErrorSnackBar(
-            'Failed to update Brand: ${response.body?['message'] ?? 'Unknown error occurred'}');
-        return;
-      }
       if (response.isOk) {
         ApiResponse<List<Brand>> apiResponse =
             ApiResponse<List<Brand>>.fromJson(response.body, null);

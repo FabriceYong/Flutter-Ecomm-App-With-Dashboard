@@ -1,3 +1,4 @@
+import 'package:ecomm_dashboard/utility/delete_dialog.dart';
 import 'package:ecomm_dashboard/utility/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -59,40 +60,13 @@ class BrandListSection extends StatelessWidget {
                       showBrandForm(context, dataProvider.brands[index]);
                     }, delete: () {
                       // should complete deleteBrand
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              actionsAlignment: MainAxisAlignment.center,
-                              buttonPadding:
-                                  const EdgeInsets.symmetric(horizontal: 20.0),
-                              backgroundColor: bgColor,
-                              title: const Text(
-                                'Delete Variant',
-                                textAlign: TextAlign.center,
-                              ),
-                              content: const Text(
-                                  'Are you sure you want to delete this brand?'),
-                              actions: [
-                                MaterialButton(
-                                    elevation: 2,
-                                    color: secondaryColor,
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('Cancel')),
-                                MaterialButton(
-                                  elevation: 2,
-                                  color: Colors.red,
-                                  onPressed: () {
-                                    context.brandProvider.deleteBrand(
-                                        dataProvider.brands[index]);
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Delete'),
-                                )
-                              ],
-                            );
+                      showDeleteDialog(
+                          title: 'Delete',
+                          content: const Text(
+                              'Are you sure you want to delete this brand?'),
+                          onPressed: () {
+                            context.brandProvider
+                                .deleteBrand(dataProvider.brands[index]);
                           });
                     }),
                   ),

@@ -40,7 +40,8 @@ class PosterProvider extends ChangeNotifier {
       final Response response =
           await service.addItem(endpointUrl: 'posters', itemData: formData);
       if (response.isOk) {
-        ApiResponse apiResponse = ApiResponse.fromJson(response.body, null);
+        ApiResponse<List<Poster>> apiResponse =
+            ApiResponse<List<Poster>>.fromJson(response.body, null);
         if (apiResponse.success) {
           _dataProvider.getAllPosters;
           clearFields();
@@ -52,10 +53,11 @@ class PosterProvider extends ChangeNotifier {
         }
       } else {
         SnackBarHelper.showErrorSnackBar(
-            response.body?['message'] ?? response.statusText);
+            'Error: ${response.body?['message'] ?? response.statusText}');
       }
     } catch (e) {
-      log(e.toString());
+      print(e);
+      SnackBarHelper.showErrorSnackBar(e.toString());
       rethrow;
     }
   }
@@ -78,9 +80,10 @@ class PosterProvider extends ChangeNotifier {
           itemId: posterForUpdate?.sId ?? '',
           itemData: formData);
       if (response.isOk) {
-        ApiResponse apiResponse = ApiResponse.fromJson(response.body, null);
+        ApiResponse<List<Poster>> apiResponse =
+            ApiResponse<List<Poster>>.fromJson(response.body, null);
         if (apiResponse.success) {
-          _dataProvider.getAllPosters;
+          _dataProvider.getAllPosters();
           clearFields();
           SnackBarHelper.showSuccessSnackBar(apiResponse.message);
           log('Poster updated successfully');
@@ -89,10 +92,11 @@ class PosterProvider extends ChangeNotifier {
         }
       } else {
         SnackBarHelper.showErrorSnackBar(
-            response.body?['message'] ?? response.statusText);
+            'Error: ${response.body?['message'] ?? response.statusText}');
       }
     } catch (e) {
       print(e);
+      SnackBarHelper.showErrorSnackBar(e.toString());
       rethrow;
     }
   }
@@ -122,7 +126,8 @@ class PosterProvider extends ChangeNotifier {
       final Response response = await service.deleteItem(
           endpointUrl: 'posters', itemId: poster.sId ?? '');
       if (response.isOk) {
-        ApiResponse apiResponse = ApiResponse.fromJson(response.body, null);
+        ApiResponse<List<Poster>> apiResponse =
+            ApiResponse<List<Poster>>.fromJson(response.body, null);
         if (apiResponse.success) {
           _dataProvider.getAllPosters;
           SnackBarHelper.showSuccessSnackBar(apiResponse.message);
@@ -132,10 +137,11 @@ class PosterProvider extends ChangeNotifier {
         }
       } else {
         SnackBarHelper.showErrorSnackBar(
-            response.body?['message'] ?? response.statusText);
+            'Error: ${response.body?['message'] ?? response.statusText}');
       }
     } catch (e) {
       print(e);
+      SnackBarHelper.showErrorSnackBar(e.toString());
       rethrow;
     }
   }

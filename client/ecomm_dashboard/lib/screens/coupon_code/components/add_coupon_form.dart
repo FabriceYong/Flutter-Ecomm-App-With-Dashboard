@@ -1,22 +1,22 @@
-import '../../../models/product.dart';
-import '../../../models/sub_category.dart';
-import '../provider/coupon_code_provider.dart';
-import '../../../utility/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
+
 import '../../../models/category.dart';
 import '../../../models/coupon.dart';
+import '../../../models/product.dart';
+import '../../../models/sub_category.dart';
 import '../../../utility/constants.dart';
+import '../../../utility/extensions.dart';
 import '../../../widgets/custom_date_picker.dart';
 import '../../../widgets/custom_dropdown.dart';
 import '../../../widgets/custom_text_field.dart';
-
+import '../provider/coupon_code_provider.dart';
 
 class CouponSubmitForm extends StatelessWidget {
   final Coupon? coupon;
 
-  const CouponSubmitForm({Key? key, this.coupon}) : super(key: key);
+  const CouponSubmitForm({super.key, this.coupon});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class CouponSubmitForm extends StatelessWidget {
         key: context.couponCodeProvider.addCouponFormKey,
         child: Container(
           width: size.width * 0.7,
-          padding: EdgeInsets.all(defaultPadding),
+          padding: const EdgeInsets.all(defaultPadding),
           decoration: BoxDecoration(
             color: bgColor,
             borderRadius: BorderRadius.circular(12.0),
@@ -35,7 +35,7 @@ class CouponSubmitForm extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Gap(defaultPadding),
+              const Gap(defaultPadding),
               Row(
                 children: [
                   Expanded(
@@ -55,23 +55,25 @@ class CouponSubmitForm extends StatelessWidget {
                     child: CustomDropdown(
                       key: GlobalKey(),
                       hintText: 'Discount Type',
-                      items: ['fixed', 'percentage'],
-                      initialValue: context.couponCodeProvider.selectedDiscountType,
+                      items: const ['fixed', 'percentage'],
+                      initialValue:
+                          context.couponCodeProvider.selectedDiscountType,
                       onChanged: (newValue) {
-                        context.couponCodeProvider.selectedDiscountType = newValue ?? 'fixed';
+                        context.couponCodeProvider.selectedDiscountType =
+                            newValue ?? 'fixed';
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please select a discount type';
                         }
                         return null;
-                      }, displayItem: (val ) => val,
+                      },
+                      displayItem: (val) => val,
                     ),
                   ),
                 ],
               ),
-              Gap(defaultPadding),
-
+              const Gap(defaultPadding),
               Row(
                 children: [
                   Expanded(
@@ -90,7 +92,8 @@ class CouponSubmitForm extends StatelessWidget {
                   ),
                   Expanded(
                     child: CustomTextField(
-                      controller: context.couponCodeProvider.minimumPurchaseAmountCtrl,
+                      controller:
+                          context.couponCodeProvider.minimumPurchaseAmountCtrl,
                       labelText: 'Minimum Purchase Amount',
                       inputType: TextInputType.number,
                       onSave: (val) {},
@@ -104,8 +107,7 @@ class CouponSubmitForm extends StatelessWidget {
                   ),
                 ],
               ),
-
-              Gap(defaultPadding),
+              const Gap(defaultPadding),
               Row(
                 children: [
                   Expanded(
@@ -124,11 +126,13 @@ class CouponSubmitForm extends StatelessWidget {
                     child: CustomDropdown(
                       key: GlobalKey(),
                       hintText: 'Status',
-                      initialValue: context.couponCodeProvider.selectedCouponStatus,
-                      items: ['active', 'inactive'],
-                      displayItem: (val ) => val,
+                      initialValue:
+                          context.couponCodeProvider.selectedCouponStatus,
+                      items: const ['active', 'inactive'],
+                      displayItem: (val) => val,
                       onChanged: (newValue) {
-                        context.couponCodeProvider.selectedCouponStatus = newValue ?? 'active';
+                        context.couponCodeProvider.selectedCouponStatus =
+                            newValue ?? 'active';
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -147,9 +151,11 @@ class CouponSubmitForm extends StatelessWidget {
                       builder: (context, couponProvider, child) {
                         return CustomDropdown(
                           initialValue: couponProvider.selectedCategory,
-                          hintText: couponProvider.selectedCategory?.name ?? 'Select category',
+                          hintText: couponProvider.selectedCategory?.name ??
+                              'Select category',
                           items: context.dataProvider.categories,
-                          displayItem: (Category? category) => category?.name ?? '',
+                          displayItem: (Category? category) =>
+                              category?.name ?? '',
                           onChanged: (newValue) {
                             if (newValue != null) {
                               couponProvider.selectedSubCategory = null;
@@ -167,9 +173,11 @@ class CouponSubmitForm extends StatelessWidget {
                       builder: (context, couponProvider, child) {
                         return CustomDropdown(
                           initialValue: couponProvider.selectedSubCategory,
-                          hintText: couponProvider.selectedSubCategory?.name ?? 'Select sub category',
+                          hintText: couponProvider.selectedSubCategory?.name ??
+                              'Select sub category',
                           items: context.dataProvider.subCategories,
-                          displayItem: (SubCategory? subCategory) => subCategory?.name ?? '',
+                          displayItem: (SubCategory? subCategory) =>
+                              subCategory?.name ?? '',
                           onChanged: (newValue) {
                             if (newValue != null) {
                               couponProvider.selectedCategory = null;
@@ -187,9 +195,11 @@ class CouponSubmitForm extends StatelessWidget {
                       builder: (context, couponProvider, child) {
                         return CustomDropdown(
                           initialValue: couponProvider.selectedProduct,
-                          hintText: couponProvider.selectedProduct?.name ?? 'Select product',
+                          hintText: couponProvider.selectedProduct?.name ??
+                              'Select product',
                           items: context.dataProvider.products,
-                          displayItem: (Product? product) => product?.name ?? '',
+                          displayItem: (Product? product) =>
+                              product?.name ?? '',
                           onChanged: (newValue) {
                             if (newValue != null) {
                               couponProvider.selectedCategory = null;
@@ -204,7 +214,7 @@ class CouponSubmitForm extends StatelessWidget {
                   ),
                 ],
               ),
-              Gap(defaultPadding),
+              const Gap(defaultPadding),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -216,9 +226,9 @@ class CouponSubmitForm extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).pop(); // Close the popup
                     },
-                    child: Text('Cancel'),
+                    child: const Text('Cancel'),
                   ),
-                  SizedBox(width: defaultPadding),
+                  const SizedBox(width: defaultPadding),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
@@ -226,13 +236,18 @@ class CouponSubmitForm extends StatelessWidget {
                     ),
                     onPressed: () {
                       // Validate and save the form
-                      if (context.couponCodeProvider.addCouponFormKey.currentState!.validate()) {
-                        context.couponCodeProvider.addCouponFormKey.currentState!.save();
-                        //TODO: should complete call  submitCoupon
+                      if (context
+                          .couponCodeProvider.addCouponFormKey.currentState!
+                          .validate()) {
+                        context
+                            .couponCodeProvider.addCouponFormKey.currentState!
+                            .save();
+                        // should complete call  submitCoupon
+                        context.couponCodeProvider.submitCoupon();
                         Navigator.of(context).pop();
                       }
                     },
-                    child: Text('Submit'),
+                    child: const Text('Submit'),
                   ),
                 ],
               ),
@@ -251,7 +266,9 @@ void showAddCouponForm(BuildContext context, Coupon? coupon) {
     builder: (BuildContext context) {
       return AlertDialog(
         backgroundColor: bgColor,
-        title: Center(child: Text('Add Coupon'.toUpperCase(), style: TextStyle(color: primaryColor))),
+        title: Center(
+            child: Text('Add Coupon'.toUpperCase(),
+                style: const TextStyle(color: primaryColor))),
         content: CouponSubmitForm(coupon: coupon),
       );
     },

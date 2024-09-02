@@ -1,3 +1,5 @@
+import 'package:ecomm_dashboard/utility/delete_dialog.dart';
+import 'package:ecomm_dashboard/utility/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -63,7 +65,10 @@ class CouponListSection extends StatelessWidget {
                         showAddCouponForm(context, dataProvider.coupons[index]);
                       },
                       delete: () {
-                        //TODO: should complete call deleteCoupon
+                        // should complete call deleteCoupon
+                        showDeleteDialog(title: 'Delete', content: Text('Are you sure you want to delete this coupon?'), onPressed: (){
+                          context.couponCodeProvider.deleteCoupon(dataProvider.coupons[index]);
+                        });
                       },
                     ),
                   ),
